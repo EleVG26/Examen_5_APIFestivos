@@ -1,6 +1,7 @@
 package apifestivos.apifestivos.dominio.DTOs;
 
-import java.time.LocalDate;
+
+import java.util.Date;
 
 /**
  * Clase DTO (Data Transfer Object) para representar un festivo.
@@ -10,14 +11,14 @@ import java.time.LocalDate;
 public class FestivoDTO {
      
     private String nombre; // Nombre del festivo
-    private LocalDate fecha; // Fecha del festivo
+    private Date fecha; // Fecha del festivo
 
     // Constructor vacío
     public FestivoDTO() {
     }
 
     // Constructor con parámetros
-    public FestivoDTO(String nombre, LocalDate fecha) {
+    public FestivoDTO(String nombre, Date fecha) {
         this.nombre = nombre;
         this.fecha = fecha;
     }
@@ -31,11 +32,11 @@ public class FestivoDTO {
         this.nombre = nombre;
     }
 
-    public LocalDate getFecha() {
+    public Date getFecha() {
         return fecha;
     }
 
-    public void setFecha(LocalDate fecha) {
+    public void setFecha(Date fecha) {
         this.fecha = fecha;
     }
 

@@ -1,10 +1,9 @@
 package apifestivos.apifestivos.aplicacion;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.time.DayOfWeek;
-import java.time.LocalDate;
-import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import org.springframework.stereotype.Service;
 import apifestivos.apifestivos.core.interfaces.repositorios.IFestivoRepositorio;
@@ -35,20 +34,21 @@ public class FestivoServicio implements IFestivoServicio {
      * @return "Es Festivo" si la fecha corresponde a un día festivo, "No es festivo" si no, o "Fecha no válida" si la fecha es incorrecta.
      */
 
-    public String verificarSiEsFestivo(LocalDate fecha) {
+    public String verificarSiEsFestivo(Date fecha) {
         try {
             // Validar que la fecha no sea nula y que sea válida
             if (fecha == null || !esFechaValida(fecha)) {
                 return "Fecha no válida";
             }
 
-            int anio = fecha.getYear();
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(fecha);
+            int anio = cal.get(Calendar.YEAR);
 
-            // Obtener todos los festivos
             List<Festivo> festivos = festivoRepositorio.findAll();
             // Iterar sobre cada festivo para verificar si coincide con la fecha
             for (Festivo festivo : festivos) {
-                LocalDate fechaFestivo = calcularFechaFestivo(
+                Date fechaFestivo = calcularFechaFestivo(
                         festivo.getTipo().getId(),
                         festivo.getDia(),
                         festivo.getMes(),
@@ -78,7 +78,7 @@ public class FestivoServicio implements IFestivoServicio {
         List<FestivoDTO> festivosDTO = new ArrayList<>();
         // Iterar sobre cada festivo para calcular su fecha en el año dado
         for (Festivo festivo : festivos) {
-            LocalDate fechaFestivo = calcularFechaFestivo(
+                Date fechaFestivo = calcularFechaFestivo(
                     festivo.getTipo().getId(),
                     festivo.getDia(),
                     festivo.getMes(),
@@ -97,8 +97,10 @@ public class FestivoServicio implements IFestivoServicio {
      * @return True si la fecha es válida, false en caso contrario.
      */
 
-    private boolean esFechaValida(LocalDate fecha) {
-        return fecha != null && fecha.getYear() > 0; // Verifica que la fecha no sea nula y el año sea válido.
+    private boolean esFechaValida(Date fecha) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(fecha);
+        return fecha != null && cal.get(Calendar.YEAR) > 0;
     }
 
     /**
@@ -111,30 +113,31 @@ public class FestivoServicio implements IFestivoServicio {
      * @return Fecha del festivo calculada.
      */
 
-    private LocalDate calcularFechaFestivo(int tipoFestivo, Integer dia, Integer mes, Integer diasPascua, int anio) {
-        LocalDate fechaFestivo;
+    private Date calcularFechaFestivo(int tipoFestivo, Integer dia, Integer mes, Integer diasPascua, int anio) {
+        Date fechaFestivo;
+        Date fechaPascua;
 
         switch (tipoFestivo) {
             case 1:
                 // Festivo fijo que no se traslada
-                fechaFestivo = LocalDate.of(anio, mes, dia);
+                fechaFestivo = new Date(anio - 1900, mes - 1, dia);
                 break;
 
             case 2:
                 // Festivo fijo que se traslada al siguiente lunes (Ley de Puente Festivo)
-                fechaFestivo = LocalDate.of(anio, mes, dia);
+                fechaFestivo = new Date(anio - 1900, mes - 1, dia);
                 fechaFestivo = siguienteLunes(fechaFestivo);
                 break;
 
             case 3:
                 // Festivo basado en el domingo de Pascua
-                LocalDate fechaPascua = getSemanaSanta(anio);
+                fechaPascua = getDomingoDePascua(anio);
                 fechaFestivo = incrementarDias(fechaPascua, diasPascua);
                 break;
 
             case 4:
                 // Festivo basado en Pascua y que se traslada al siguiente lunes
-                fechaPascua = getSemanaSanta(anio);
+                fechaPascua = getDomingoDePascua(anio);
                 fechaFestivo = incrementarDias(fechaPascua, diasPascua);
                 fechaFestivo = siguienteLunes(fechaFestivo);
                 break;
@@ -152,14 +155,23 @@ public class FestivoServicio implements IFestivoServicio {
      * @return Fecha del Domingo de Pascua.
      */
     
-    public LocalDate getSemanaSanta(int anio) {
+     public Date getDomingoDePascua(int anio) {
         int a = anio % 19;
-        int b = anio % 4;
-        int c = anio % 7;
-        int d = (19 * a + 24) % 30;
-        int e = (2 * b + 4 * c + 6 * d + 5) % 7;
-        int dia = 15 + d + e;
-        return LocalDate.of(anio, 3, 1).plusDays(dia - 1);
+        int b = anio / 100;
+        int c = anio % 100;
+        int d = b / 4;
+        int e = b % 4;
+        int f = (b + 8) / 25;
+        int g = (b - f + 1) / 3;
+        int h = (19 * a + b - d - g + 15) % 30;
+        int i = c / 4;
+        int k = c % 4;
+        int l = (32 + 2 * e + 2 * i - h - k) % 7;
+        int m = (a + 11 * h + 22 * l) / 451;
+        int mes = (h + l - 7 * m + 114) / 31;
+        int dia = ((h + l - 7 * m + 114) % 31) + 1;
+
+        return new Date(anio - 1900, mes - 1, dia);
     }
 
     /**
@@ -168,8 +180,12 @@ public class FestivoServicio implements IFestivoServicio {
      * @param dias Días a incrementar.
      * @return Fecha incrementada.
      */
-    public LocalDate incrementarDias(LocalDate fecha, int dias) {
-        return fecha.plusDays(dias);
+    public static Date incrementarDias(Date fecha, int dias) {
+        Calendar cld = Calendar.getInstance();
+        cld.setTime(fecha);
+        cld.add(Calendar.DATE, dias);
+        return cld.getTime();
+
     }
 
     /**
@@ -177,8 +193,21 @@ public class FestivoServicio implements IFestivoServicio {
      * @param fecha Fecha de referencia.
      * @return Fecha del siguiente lunes.
      */
-    public LocalDate siguienteLunes(LocalDate fecha) {
-        return fecha.with(TemporalAdjusters.nextOrSame(DayOfWeek.MONDAY));
+    public static Date siguienteLunes(Date fecha) {
+        Calendar cld = Calendar.getInstance();
+        cld.setTime(fecha);
+
+        int diaSemana = cld.get(Calendar.DAY_OF_WEEK);
+        if (diaSemana != Calendar.MONDAY) {
+            if (diaSemana > Calendar.MONDAY) {
+                fecha = incrementarDias(fecha, 9 - diaSemana);
+            } else {
+                fecha = incrementarDias(fecha, 1);
+            }
+        }
+
+        return fecha;
     }
+   
 }
 
