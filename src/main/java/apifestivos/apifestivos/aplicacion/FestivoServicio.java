@@ -1,9 +1,8 @@
 package apifestivos.apifestivos.aplicacion;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
-import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -99,8 +98,12 @@ public class FestivoServicio implements IFestivoServicio {
                         festivo.getDiasPascua(),
                         anio);
 
-                OffsetDateTime fechaOffsetDateTime = fechaFestivo.toInstant()
-                .atOffset(ZoneOffset.UTC);
+                // OffsetDateTime fechaOffsetDateTime = fechaFestivo.toInstant()
+                //         .atOffset(ZoneOffset.UTC);
+                LocalDateTime fechaLocalDateTime = fechaFestivo.toInstant()
+                    .atZone(ZoneOffset.UTC)
+                    .toLocalDateTime();
+                OffsetDateTime fechaOffsetDateTime = fechaLocalDateTime.atOffset(ZoneOffset.UTC);
 
                 FestivoDTO dto = new FestivoDTO(festivo.getNombre(), fechaOffsetDateTime);
                 festivosDTO.add(dto);
@@ -159,9 +162,14 @@ public class FestivoServicio implements IFestivoServicio {
                 break;
 
             case 2:
-                // Festivo fijo que se traslada al siguiente lunes (Ley de Puente Festivo)
+                // Festivo fijo que se traslada al siguiente lunes si cae entre martes y domingo
                 fechaFestivo = crearFecha(anio, mes, dia);
-                fechaFestivo = siguienteLunes(fechaFestivo);
+                Calendar cal = Calendar.getInstance();
+                cal.setTime(fechaFestivo);
+                int diaSemana = cal.get(Calendar.DAY_OF_WEEK);
+                if (diaSemana != Calendar.MONDAY) {
+                    fechaFestivo = siguienteLunes(fechaFestivo);
+                }
                 break;
 
             case 3:

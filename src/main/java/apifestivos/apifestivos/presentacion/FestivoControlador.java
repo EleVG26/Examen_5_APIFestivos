@@ -54,6 +54,10 @@ public class FestivoControlador {
     public ResponseEntity<String> verificarFestivo(@PathVariable int anio, @PathVariable int mes,
         @PathVariable int dia) {
         try {
+            // Validar que el año esté entre 1983 y 9999
+            if (anio < 1983 || anio > 9999) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Año no válido. Debe estar entre 1983 y 9999");
+            }
             // Intentar crear una instancia de LocalDate con los valores proporcionados
             LocalDate fechaLocalDate = LocalDate.of(anio, mes, dia);
 
@@ -72,8 +76,8 @@ public class FestivoControlador {
     @GetMapping("/obtener/{anio}")
     public ResponseEntity<List<FestivoDTO>> obtenerFestivosPorAnio(@PathVariable int anio) {
         try {
-            if (anio <= 0) {
-                return ResponseEntity.badRequest().body(null);
+            if (anio < 1983 || anio > 9999) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
             }
             List<FestivoDTO> festivos = festivoServicio.obtenerFestivosPorAnio(anio);
             return ResponseEntity.ok(festivos);
@@ -82,5 +86,4 @@ public class FestivoControlador {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
-
 }
