@@ -55,7 +55,7 @@ public class FestivoControlador {
         @PathVariable int dia) {
         try {
             // Validar que el año esté entre 1983 y 9999
-            if (anio < 1983 || anio > 9999) {
+            if (anio < 1984 || anio > 9999) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Año no válido. Debe estar entre 1983 y 9999");
             }
             // Intentar crear una instancia de LocalDate con los valores proporcionados
