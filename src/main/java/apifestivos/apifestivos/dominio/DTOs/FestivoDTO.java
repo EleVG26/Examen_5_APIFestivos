@@ -1,7 +1,10 @@
 package apifestivos.apifestivos.dominio.DTOs;
 
 
-import java.util.Date;
+import java.time.OffsetDateTime;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 
 /**
  * Clase DTO (Data Transfer Object) para representar un festivo.
@@ -11,14 +14,15 @@ import java.util.Date;
 public class FestivoDTO {
      
     private String nombre; // Nombre del festivo
-    private Date fecha; // Fecha del festivo
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")
+    private OffsetDateTime fecha; // Fecha del festivo con tiempo y zona horaria
 
     // Constructor vacío
     public FestivoDTO() {
     }
 
     // Constructor con parámetros
-    public FestivoDTO(String nombre, Date fecha) {
+    public FestivoDTO(String nombre, OffsetDateTime fecha) {
         this.nombre = nombre;
         this.fecha = fecha;
     }
@@ -32,11 +36,11 @@ public class FestivoDTO {
         this.nombre = nombre;
     }
 
-    public Date getFecha() {
+    public OffsetDateTime getFecha() {
         return fecha;
     }
 
-    public void setFecha(Date fecha) {
+    public void setFecha(OffsetDateTime fecha) {
         this.fecha = fecha;
     }
 
