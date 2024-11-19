@@ -96,32 +96,32 @@ INSERT INTO Festivo (Dia, Mes, Nombre, IdTipo, DiasPascua) VALUES(6, 1, 'Santos 
 
 #### Ejemplo
 
-1. **URL**: `http://localhost:8080/festivos/obtener/20223^`
+1. **URL**: `http://localhost:8080/festivos/obtener/2023`
     - **Respuesta**:
   
                    `{
                         "nombre": "Año nuevo",
-                        "fecha": "2023-01-01T05:00:00.000"
+                        "fecha": "2023-01-01T05:00:00.000+00:00"
                     },`
                     
                     {
                         "nombre": "Santos Reyes",
-                        "fecha": "2023-01-09T05:00:00.000"
+                        "fecha": "2023-01-09T05:00:00.000+00:00"
                     },
 
                     {
                         "nombre": "San José",
-                        "fecha": "2023-03-20T05:00:00.000"
+                        "fecha": "2023-03-20T05:00:00.000+00:00"
                     },
 
                     {
                         "nombre": "Jueves Santo",
-                        "fecha": "2023-04-06T05:00:00.000"
+                        "fecha": "2023-04-06T05:00:00.000+00:00"
                     },
 
                     {
                         "nombre": "Viernes Santo",
-                        "fecha": "2023-04-07T05:00:00.000"
+                        "fecha": "2023-04-07T05:00:00.000+00:00"
                     },
                     `
 
