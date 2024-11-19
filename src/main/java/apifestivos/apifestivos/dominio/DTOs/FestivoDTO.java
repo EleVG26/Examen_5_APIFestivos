@@ -14,7 +14,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 public class FestivoDTO {
      
     private String nombre; // Nombre del festivo
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSxxx")
     private OffsetDateTime fecha; // Fecha del festivo con tiempo y zona horaria
 
     // Constructor vacío
