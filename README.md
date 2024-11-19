@@ -90,7 +90,7 @@ INSERT INTO Festivo (Dia, Mes, Nombre, IdTipo, DiasPascua) VALUES(6, 1, 'Santos 
 
 ### Obtener festivos de un año
 
-- **URL**: `/festivos/obtener//{anio}`
+- **URL**: `/festivos/obtener/{anio}`
 - **Método**: `GET`
 - **Descripción**: Obtiene todos los festivos de un año.
 
@@ -118,7 +118,7 @@ INSERT INTO Festivo (Dia, Mes, Nombre, IdTipo, DiasPascua) VALUES(6, 1, 'Santos 
                         "nombre": "Jueves Santo",
                         "fecha": "2023-04-06T05:00:00.000"
                     },
-                    
+
                     {
                         "nombre": "Viernes Santo",
                         "fecha": "2023-04-07T05:00:00.000"
